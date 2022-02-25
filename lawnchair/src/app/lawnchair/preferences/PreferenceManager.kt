@@ -21,10 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import app.lawnchair.LawnchairLauncher
 import app.lawnchair.font.FontCache
-import app.lawnchair.theme.color.ColorOption
 import app.lawnchair.util.isOnePlusStock
 import com.android.launcher3.InvariantDeviceProfile
-import com.android.launcher3.Utilities
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.MainThreadInitializedObject
 
@@ -61,7 +59,6 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val smartSpaceEnable = BoolPref("pref_smartSpaceEnable", true, restart)
     val minusOneEnable = BoolPref("pref_enableMinusOne", true, recreate)
     val useFuzzySearch = BoolPref("pref_useFuzzySearch", false)
-    val hideAppSearchBar = BoolPref("pref_hideAppSearchBar", false, recreate)
 
     // TODO: Add the ability to manually delete empty pages.
     val allowEmptyPages = BoolPref("pref_allowEmptyPages", false)
@@ -75,8 +72,6 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val windowCornerRadius = IntPref("pref_windowCornerRadius", 80, recreate)
     val autoLaunchRoot = BoolPref("pref_autoLaunchRoot", false)
     val wallpaperScrolling = BoolPref("pref_wallpaperScrolling", true)
-    val showSysUiScrim = BoolPref("pref_showSysUiScrim", true)
-    val showStatusBar = BoolPref("pref_showStatusBar", true, recreate)
     val allAppsIconLabels = BoolPref("pref_allAppsIconLabels", true, reloadGrid)
     val searchAutoShowKeyboard = BoolPref("pref_searchAutoShowKeyboard", false)
     val enableDebugMenu = BoolPref("pref_enableDebugMenu", false)
@@ -107,7 +102,6 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val recentsActionShare = BoolPref("pref_recentsActionShare", isOnePlusStock)
     val recentsActionLens = BoolPref("pref_recentsActionLens", true)
     val recentsActionClearAll = BoolPref("pref_clearAllAsAction", false)
-    val enableFontSelection = BoolPref("pref_enableFontSelection", true)
 
     init {
         sp.registerOnSharedPreferenceChangeListener(this)

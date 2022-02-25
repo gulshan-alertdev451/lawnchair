@@ -48,6 +48,8 @@ fun NavGraphBuilder.homeScreenGraph(route: String) {
 interface HomeScreenPreferenceCollectorScope : PreferenceCollectorScope {
     val darkStatusBar: Boolean
     val roundedWidgets: Boolean
+    val showStatusBar: Boolean
+    val showTopShadow: Boolean
 }
 
 @Composable
@@ -55,10 +57,17 @@ fun HomeScreenPreferenceCollector(content: @Composable HomeScreenPreferenceColle
     val preferenceManager = preferenceManager2()
     val darkStatusBar by preferenceManager.darkStatusBar.state()
     val roundedWidgets by preferenceManager.roundedWidgets.state()
-    ifNotNull(darkStatusBar, roundedWidgets) {
+    val showStatusBar by preferenceManager.showStatusBar.state()
+    val showTopShadow by preferenceManager.showTopShadow.state()
+    ifNotNull(
+        darkStatusBar, roundedWidgets,
+        showStatusBar, showTopShadow,
+    ) {
         object : HomeScreenPreferenceCollectorScope {
             override val darkStatusBar = it[0] as Boolean
             override val roundedWidgets = it[1] as Boolean
+            override val showStatusBar = it[2] as Boolean
+            override val showTopShadow: Boolean = it[3] as Boolean
             override val coroutineScope = rememberCoroutineScope()
             override val preferenceManager = preferenceManager
         }.content()
@@ -112,13 +121,15 @@ fun HomeScreenPreferences() {
                     prefs.smartSpaceEnable.getAdapter(),
                     label = stringResource(id = R.string.smart_space_enable),
                 )
-                SwitchPreference(
-                    prefs.showStatusBar.getAdapter(),
+                SwitchPreference2(
+                    checked = showStatusBar,
                     label = stringResource(id = R.string.show_status_bar),
+                    edit = { showStatusBar.set(value = it) },
                 )
-                SwitchPreference(
-                    prefs.showSysUiScrim.getAdapter(),
+                SwitchPreference2(
+                    checked = showTopShadow,
                     label = stringResource(id = R.string.show_sys_ui_scrim),
+                    edit = { showTopShadow.set(value = it) },
                 )
             }
             PreferenceGroup(heading = stringResource(id = R.string.icons)) {
