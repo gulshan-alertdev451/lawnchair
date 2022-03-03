@@ -47,6 +47,8 @@ fun NavGraphBuilder.appDrawerGraph(route: String) {
 interface AppDrawerPreferenceCollectorScope : PreferenceCollectorScope {
     val hiddenApps: Set<String>
     val hideAppDrawerSearchBar: Boolean
+    val autoShowKeyboardInDrawer: Boolean
+    val drawerIconSizeFactor: Float
 }
 
 @Composable
@@ -54,10 +56,17 @@ fun AppDrawerPreferenceCollector(content: @Composable AppDrawerPreferenceCollect
     val preferenceManager = preferenceManager2()
     val hiddenApps by preferenceManager.hiddenApps.state()
     val hideAppDrawerSearchBar by preferenceManager.hideAppDrawerSearchBar.state()
-    ifNotNull(hiddenApps, hideAppDrawerSearchBar) {
+    val autoShowKeyboardInDrawer by preferenceManager.autoShowKeyboardInDrawer.state()
+    val drawerIconSizeFactor by preferenceManager.drawerIconSizeFactor.state()
+    ifNotNull(
+        hiddenApps, hideAppDrawerSearchBar,
+        autoShowKeyboardInDrawer, drawerIconSizeFactor,
+    ) {
         object : AppDrawerPreferenceCollectorScope {
             override val hiddenApps = it[0] as Set<String>
             override val hideAppDrawerSearchBar = it[1] as Boolean
+            override val autoShowKeyboardInDrawer = it[2] as Boolean
+            override val drawerIconSizeFactor = it[3] as Float
             override val coroutineScope = rememberCoroutineScope()
             override val preferenceManager = preferenceManager
         }.content()
@@ -99,8 +108,9 @@ fun AppDrawerPreferences() {
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     DividerColumn {
-                        SwitchPreference(
-                            adapter = prefs.searchAutoShowKeyboard.getAdapter(),
+                        SwitchPreference2(
+                            checked = autoShowKeyboardInDrawer,
+                            edit = { autoShowKeyboardInDrawer.set(value = it) },
                             label = stringResource(id = R.string.pref_search_auto_show_keyboard),
                         )
                         if (!deviceSearchEnabled) {
@@ -151,9 +161,10 @@ fun AppDrawerPreferences() {
                 )
             }
             PreferenceGroup(heading = stringResource(id = R.string.icons)) {
-                SliderPreference(
+                SliderPreference2(
                     label = stringResource(id = R.string.icon_size),
-                    adapter = prefs.allAppsIconSizeFactor.getAdapter(),
+                    value = drawerIconSizeFactor,
+                    edit = { drawerIconSizeFactor.set(value = it) },
                     step = 0.1f,
                     valueRange = 0.5F..1.5F,
                     showAsPercentage = true,

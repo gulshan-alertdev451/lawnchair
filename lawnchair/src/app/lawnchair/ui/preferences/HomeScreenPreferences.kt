@@ -50,6 +50,9 @@ interface HomeScreenPreferenceCollectorScope : PreferenceCollectorScope {
     val roundedWidgets: Boolean
     val showStatusBar: Boolean
     val showTopShadow: Boolean
+    val dt2s: Boolean
+    val homeIconSizeFactor: Float
+    val showIconLabelsOnHomeScreen: Boolean
 }
 
 @Composable
@@ -59,15 +62,23 @@ fun HomeScreenPreferenceCollector(content: @Composable HomeScreenPreferenceColle
     val roundedWidgets by preferenceManager.roundedWidgets.state()
     val showStatusBar by preferenceManager.showStatusBar.state()
     val showTopShadow by preferenceManager.showTopShadow.state()
+    val dt2s by preferenceManager.dt2s.state()
+    val homeIconSizeFactor by preferenceManager.homeIconSizeFactor.state()
+    val showIconLabelsOnHomeScreen by preferenceManager.showIconLabelsOnHomeScreen.state()
     ifNotNull(
         darkStatusBar, roundedWidgets,
         showStatusBar, showTopShadow,
+        dt2s, homeIconSizeFactor,
+        showIconLabelsOnHomeScreen,
     ) {
         object : HomeScreenPreferenceCollectorScope {
             override val darkStatusBar = it[0] as Boolean
             override val roundedWidgets = it[1] as Boolean
             override val showStatusBar = it[2] as Boolean
-            override val showTopShadow: Boolean = it[3] as Boolean
+            override val showTopShadow = it[3] as Boolean
+            override val dt2s = it[4] as Boolean
+            override val homeIconSizeFactor = it[5] as Float
+            override val showIconLabelsOnHomeScreen = it[6] as Boolean
             override val coroutineScope = rememberCoroutineScope()
             override val preferenceManager = preferenceManager
         }.content()
@@ -92,8 +103,9 @@ fun HomeScreenPreferences() {
                     prefs.wallpaperScrolling.getAdapter(),
                     label = stringResource(id = R.string.wallpaper_scrolling_label),
                 )
-                SwitchPreference(
-                    prefs.workspaceDt2s.getAdapter(),
+                SwitchPreference2(
+                    checked = dt2s,
+                    edit = { dt2s.set(value = it) },
                     label = stringResource(id = R.string.workspace_dt2s),
                 )
                 SwitchPreference2(
@@ -133,20 +145,21 @@ fun HomeScreenPreferences() {
                 )
             }
             PreferenceGroup(heading = stringResource(id = R.string.icons)) {
-                SliderPreference(
+                SliderPreference2(
                     label = stringResource(id = R.string.icon_size),
-                    adapter = prefs.iconSizeFactor.getAdapter(),
+                    value = homeIconSizeFactor,
                     step = 0.1f,
                     valueRange = 0.5F..1.5F,
                     showAsPercentage = true,
+                    edit = { homeIconSizeFactor.set(value = it) },
                 )
-                val showHomeLabels = prefs.showHomeLabels.getAdapter()
-                SwitchPreference(
-                    showHomeLabels,
+                SwitchPreference2(
+                    checked = showIconLabelsOnHomeScreen,
+                    edit = { showIconLabelsOnHomeScreen.set(value = it) },
                     label = stringResource(id = R.string.show_home_labels),
                 )
                 AnimatedVisibility(
-                    visible = showHomeLabels.state.value,
+                    visible = showIconLabelsOnHomeScreen,
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut(),
                 ) {

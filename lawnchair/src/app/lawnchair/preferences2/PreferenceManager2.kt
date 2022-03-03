@@ -20,13 +20,13 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.lawnchair.font.FontCache
 import app.lawnchair.icons.shape.IconShape
 import app.lawnchair.icons.shape.IconShapeManager
-import app.lawnchair.qsb.providers.Google
 import app.lawnchair.qsb.providers.QsbSearchProvider
 import app.lawnchair.theme.color.ColorOption
 import com.android.launcher3.Utilities
@@ -122,6 +122,40 @@ class PreferenceManager2(private val context: Context) : PreferenceManager {
                 LawnchairPreferenceManager.getInstance(context).workspaceFont.set(newValue = fontCache.uiText)
             }
         },
+    )
+
+    val dt2s = preference(
+        key = booleanPreferencesKey(name = "dt2s"),
+        defaultValue = true,
+    )
+
+    val autoShowKeyboardInDrawer = preference(
+        key = booleanPreferencesKey(name = "auto_show_keyboard_in_drawer"),
+        defaultValue = false,
+    )
+
+    val homeIconSizeFactor = preference(
+        key = floatPreferencesKey(name = "home_icon_size_factor"),
+        defaultValue = 1F,
+        onSet = { reloadHelper.reloadIcons() },
+    )
+
+    val folderPreviewBackgroundOpacity = preference(
+        key = floatPreferencesKey(name = "folder_preview_background_opacity"),
+        defaultValue = 1F,
+        onSet = { reloadHelper.reloadIcons() },
+    )
+
+    val showIconLabelsOnHomeScreen = preference(
+        key = booleanPreferencesKey(name = "show_icon_labels_on_home_screen"),
+        defaultValue = true,
+        onSet = { reloadHelper.reloadGrid() },
+    )
+
+    val drawerIconSizeFactor = preference(
+        key = floatPreferencesKey(name = "drawer_icon_size_factor"),
+        defaultValue = 1F,
+        onSet = { reloadHelper.reloadIcons() },
     )
 
     companion object {
