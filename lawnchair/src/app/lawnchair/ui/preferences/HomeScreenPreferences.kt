@@ -53,6 +53,9 @@ interface HomeScreenPreferenceCollectorScope : PreferenceCollectorScope {
     val dt2s: Boolean
     val homeIconSizeFactor: Float
     val showIconLabelsOnHomeScreen: Boolean
+    val homeIconLabelSizeFactor: Float
+    val enableSmartspace: Boolean
+    val enableFeed: Boolean
 }
 
 @Composable
@@ -65,11 +68,15 @@ fun HomeScreenPreferenceCollector(content: @Composable HomeScreenPreferenceColle
     val dt2s by preferenceManager.dt2s.state()
     val homeIconSizeFactor by preferenceManager.homeIconSizeFactor.state()
     val showIconLabelsOnHomeScreen by preferenceManager.showIconLabelsOnHomeScreen.state()
+    val homeIconLabelSizeFactor by preferenceManager.homeIconLabelSizeFactor.state()
+    val enableSmartspace by preferenceManager.enableSmartspace.state()
+    val enableFeed by preferenceManager.enableFeed.state()
     ifNotNull(
         darkStatusBar, roundedWidgets,
         showStatusBar, showTopShadow,
         dt2s, homeIconSizeFactor,
-        showIconLabelsOnHomeScreen,
+        showIconLabelsOnHomeScreen, homeIconLabelSizeFactor,
+        enableSmartspace, enableFeed,
     ) {
         object : HomeScreenPreferenceCollectorScope {
             override val darkStatusBar = it[0] as Boolean
@@ -79,6 +86,9 @@ fun HomeScreenPreferenceCollector(content: @Composable HomeScreenPreferenceColle
             override val dt2s = it[4] as Boolean
             override val homeIconSizeFactor = it[5] as Float
             override val showIconLabelsOnHomeScreen = it[6] as Boolean
+            override val homeIconLabelSizeFactor = it[7] as Float
+            override val enableSmartspace = it[8] as Boolean
+            override val enableFeed = it[9] as Boolean
             override val coroutineScope = rememberCoroutineScope()
             override val preferenceManager = preferenceManager
         }.content()
@@ -108,11 +118,6 @@ fun HomeScreenPreferences() {
                     edit = { dt2s.set(value = it) },
                     label = stringResource(id = R.string.workspace_dt2s),
                 )
-                SwitchPreference2(
-                    checked = darkStatusBar,
-                    label = stringResource(id = R.string.dark_status_bar_label),
-                    edit = { darkStatusBar.set(value = it) },
-                )
                 val columns by prefs.workspaceColumns.getAdapter()
                 val rows by prefs.workspaceRows.getAdapter()
                 NavigationActionPreference(
@@ -121,22 +126,37 @@ fun HomeScreenPreferences() {
                     subtitle = stringResource(id = R.string.x_by_y, columns, rows),
                 )
             }
-            PreferenceGroup(heading = stringResource(id = R.string.what_to_show)) {
-                val feedAvailable = OverlayCallbackImpl.minusOneAvailable(LocalContext.current)
-                SwitchPreference(
-                    prefs.minusOneEnable.getAdapter(),
-                    label = stringResource(id = R.string.minus_one_enable),
-                    description = if (feedAvailable) null else stringResource(id = R.string.minus_one_unavailable),
-                    enabled = feedAvailable,
-                )
-                SwitchPreference(
-                    prefs.smartSpaceEnable.getAdapter(),
-                    label = stringResource(id = R.string.smart_space_enable),
-                )
+            PreferenceGroup(heading = stringResource(id = R.string.status_bar_label)) {
                 SwitchPreference2(
                     checked = showStatusBar,
                     label = stringResource(id = R.string.show_status_bar),
                     edit = { showStatusBar.set(value = it) },
+                )
+                AnimatedVisibility(
+                    visible = showStatusBar,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    SwitchPreference2(
+                        checked = darkStatusBar,
+                        label = stringResource(id = R.string.dark_status_bar_label),
+                        edit = { darkStatusBar.set(value = it) },
+                    )
+                }
+            }
+            PreferenceGroup(heading = stringResource(id = R.string.what_to_show)) {
+                val feedAvailable = OverlayCallbackImpl.minusOneAvailable(LocalContext.current)
+                SwitchPreference2(
+                    checked = enableFeed,
+                    edit = { enableFeed.set(value = it) },
+                    label = stringResource(id = R.string.minus_one_enable),
+                    description = if (feedAvailable) null else stringResource(id = R.string.minus_one_unavailable),
+                    enabled = feedAvailable,
+                )
+                SwitchPreference2(
+                    checked = enableSmartspace,
+                    edit = { enableSmartspace.set(value = it) },
+                    label = stringResource(id = R.string.smart_space_enable),
                 )
                 SwitchPreference2(
                     checked = showTopShadow,
@@ -163,9 +183,10 @@ fun HomeScreenPreferences() {
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut(),
                 ) {
-                    SliderPreference(
+                    SliderPreference2(
                         label = stringResource(id = R.string.label_size),
-                        adapter = prefs.textSizeFactor.getAdapter(),
+                        value = homeIconLabelSizeFactor,
+                        edit = { homeIconLabelSizeFactor.set(value = it) },
                         step = 0.1f,
                         valueRange = 0.5F..1.5F,
                         showAsPercentage = true,

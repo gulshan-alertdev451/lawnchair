@@ -51,11 +51,11 @@ class DeviceProfileOverrides(context: Context) {
 
             iconSizeFactor = preferenceManager2.homeIconSizeFactor.firstBlocking(),
             enableIconText = preferenceManager2.showIconLabelsOnHomeScreen.firstBlocking(),
-            iconTextSizeFactor = prefs.textSizeFactor.get(),
+            iconTextSizeFactor = preferenceManager2.homeIconLabelSizeFactor.firstBlocking(),
 
             allAppsIconSizeFactor = preferenceManager2.drawerIconSizeFactor.firstBlocking(),
-            enableAllAppsIconText = prefs.allAppsIconLabels.get(),
-            allAppsIconTextSizeFactor = prefs.allAppsTextSizeFactor.get()
+            enableAllAppsIconText = preferenceManager2.showIconLabelsInDrawer.firstBlocking(),
+            allAppsIconTextSizeFactor = preferenceManager2.drawerIconLabelSizeFactor.firstBlocking(),
         )
 
         fun apply(idp: InvariantDeviceProfile) {

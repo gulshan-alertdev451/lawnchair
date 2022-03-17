@@ -36,11 +36,6 @@ class PreferenceManager private constructor(private val context: Context) : Base
         Unit
     }
 
-    private val restart = {
-        reloadGrid()
-        recreate()
-    }
-
     val iconPackPackage = StringPref("pref_iconPackPackage", "", reloadIcons)
     val allowRotation = BoolPref("pref_allowRotation", false)
     val wrapAdaptiveIcons = BoolPref("prefs_wrapAdaptive", false, reloadIcons)
@@ -50,15 +45,8 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val workspaceRows = IdpIntPref("pref_workspaceRows", { numRows }, reloadGrid)
     val folderColumns = IdpIntPref("pref_folderColumns", { numFolderColumns }, reloadGrid)
     val folderRows = IdpIntPref("pref_folderRows", { numFolderRows }, reloadGrid)
-    val textSizeFactor = FloatPref("pref_textSizeFactor", 1F, reloadGrid)
-    val allAppsTextSizeFactor = FloatPref("pref_allAppsTextSizeFactor", 1F, reloadGrid)
     val allAppsColumns = IdpIntPref("pref_allAppsColumns", { numAllAppsColumns }, reloadGrid)
-    val smartSpaceEnable = BoolPref("pref_smartSpaceEnable", true, restart)
-    val minusOneEnable = BoolPref("pref_enableMinusOne", true, recreate)
-    val useFuzzySearch = BoolPref("pref_useFuzzySearch", false)
 
-    // TODO: Add the ability to manually delete empty pages.
-    val allowEmptyPages = BoolPref("pref_allowEmptyPages", false)
     val drawerOpacity = FloatPref("pref_drawerOpacity", 1F, reloadGrid)
     val coloredBackgroundLightness = FloatPref("pref_coloredBackgroundLightness", 0.9F, reloadIcons)
     val feedProvider = StringPref("pref_feedProvider", "")
@@ -67,7 +55,6 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val windowCornerRadius = IntPref("pref_windowCornerRadius", 80, recreate)
     val autoLaunchRoot = BoolPref("pref_autoLaunchRoot", false)
     val wallpaperScrolling = BoolPref("pref_wallpaperScrolling", true)
-    val allAppsIconLabels = BoolPref("pref_allAppsIconLabels", true, reloadGrid)
     val enableDebugMenu = BoolPref("pref_enableDebugMenu", false)
     val customAppName = object : MutableMapPref<ComponentKey, String>("pref_appNameMap", reloadGrid) {
         override fun flattenKey(key: ComponentKey) = key.toString()
@@ -85,11 +72,8 @@ class PreferenceManager private constructor(private val context: Context) : Base
     val searchResultPixelTips = BoolPref("pref_searchResultPixelTips", false)
     val searchResultSettings = BoolPref("pref_searchResultSettings", false)
 
-    val enableIconSelection = BoolPref("pref_enableIconSelection", false)
-    val showComponentName = BoolPref("pref_showComponentName", false)
     val themedIcons = BoolPref("themed_icons", false)
     val hotseatQsbCornerRadius = FloatPref("pref_hotseatQsbCornerRadius", 1F, recreate)
-    val allAppsCellHeightMultiplier = FloatPref("pref_allAppsCellHeightMultiplier", 1F, reloadGrid)
 
     val recentsActionScreenshot = BoolPref("pref_recentsActionScreenshot", !isOnePlusStock)
     val recentsActionShare = BoolPref("pref_recentsActionShare", isOnePlusStock)
