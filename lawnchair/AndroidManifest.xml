@@ -51,6 +51,15 @@
             </intent-filter>
         </activity>
 
+        <activity android:exported="true"
+            android:name="app.lawnchair.ui.preferences.ApplyIconPackActivity"
+            android:theme="@style/ApplyIconPackDialog">
+            <intent-filter>
+                <action android:name="app.lawnchair.APPLY_ICONS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name="com.android.launcher3.secondarydisplay.SecondaryDisplayLauncher"
             tools:node="remove" />
